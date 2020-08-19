@@ -78,6 +78,7 @@ sudo apt install postgresql libpq-dev python-pip python-virtualenv git redis-ser
 **CentoOS 7**
 ```bash
 sudo yum install -y python-devel postgresql-server postgresql-contrib python-pip python-virtualenv postgresql-devel git redis postgis wget lsof policycoreutils-python java-1.8.0-openjdk
+sudo yum install -y nginx httpd
 sudo yum groupinstall 'Development Tools'
 ```
 
@@ -99,6 +100,7 @@ sudo systemctl enable httpd
 sudo systemctl enable nginx
 
 sudo systemctl start redis
+(won't work until properly configured)
 sudo systemctl start httpd
 sudo systemctl start nginx
 
@@ -177,13 +179,13 @@ We also must create another directory in `/etc/ckan`, that will hold configurati
 
 First, let's create the user:
 ```bash
-useradd -m -s /sbin/nologin -d /usr/lib/ckan -c "CKAN User" ckan
+sudo useradd -m -s /sbin/nologin -d /usr/lib/ckan -c "CKAN User" ckan
 ```
 
 Then give `755` permission to the whole directory, so Apache can access it later on:
 
 ```bash
-chmod 755 /usr/lib/ckan
+sudo chmod 755 /usr/lib/ckan
 ```
 
 Create the configuration directories and change ownership:
