@@ -32,4 +32,21 @@ EOF
 
 . /usr/lib/ckan/default/bin/activate
 
+echo "Work on python env"
+pip install setuptools==36.1
+
+pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.8.2#egg=ckan'
+
+pip install -r /usr/lib/ckan/default/src/ckan/requirements.txt
+
+deactivate
+
+echo "fix postgres config"
+mv /var/lib/pgsql/data/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf.bak
+sed -e 's/ ident/md5/' \
+    -e 's/#local/local/' \
+    -e 's/#host/host/'  /var/lib/pgsql/data/pg_hba.conf.bak >> /var/lib/pgsql/data/pg_hba.conf/var/lib/pgsql/data/pg_hba.conf
+
+. /usr/lib/ckan/default/bin/activate
+
 
