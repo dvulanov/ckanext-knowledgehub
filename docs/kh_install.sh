@@ -117,6 +117,9 @@ sed -e 's/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_defa
     -e 's/ckan.site_id = default/ckan.site_id=unhcr_knowledgehub/' \
     -e 's/#ckan.datastore.write_url/ckan.datastore.write_url/' \
     -e 's/#ckan.datastore.read_url/ckan.datastore.read_url/' \
-    -e 's/#solr_url = http:\/\/127.0.0.1:8983\/solr/solr_url = http:\/\/127.0.0.1:8983\/solr\/ckan/' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
-    
+    -e 's/#solr_url = http:\/\/127.0.0.1:8983\/solr/solr_url = http:\/\/127.0.0.1:8983\/solr\/ckan/' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini 
+
+ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
 EOF
+
+
