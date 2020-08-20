@@ -95,4 +95,28 @@ sudo chmod 664 /etc/systemd/system/solr.service
 sudo systemctl enable solr
 sudo systemctl start solr
 
+sudo -u solr bash << EOF
+/opt/apps/solr/6.5.1/bin/solr create_core -c ckan
+cd /opt/apps/solr/6.5.1/server/solr/ckan/conf/
+wget https://raw.githubusercontent.com/keitaroinc/ckanext-knowledgehub/master/ckanext/knowledgehub/schema.xml
+mv solrconfig.xml solrconfig.xml.bak
+wget https://github.com/keitaroinc/ckanext-knowledgehub/blob/master/docs/solrconfig.xml
+EOF
+
+systemctl restart solr
+mkdir -p /etc/ckan/default
+chown -R ckan /etc/ckan/
+
+sudo -u ckan bash << EOF
 . /usr/lib/ckan/default/bin/activate
+paster make-config ckan /etc/ckan/default/production.ini
+mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
+
+sed -e 's/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_default/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_default?sslmode=disable/' \
+    -e 's/ckan.site_url =/ckan.site_url = http:\/\/knowledgehub.unhcr.org/' \
+    -e 's/ckan.site_id = default/ckan.site_id=unhcr_knowledgehub/' \
+    -e 's/#ckan.datastore.write_url/ckan.datastore.write_url/' \
+    -e 's/#ckan.datastore.read_url/ckan.datastore.read_url/' \
+    -e 's/#solr_url = http:\/\/127.0.0.1:8983\/solr/solr_url = http:\/\/127.0.0.1:8983\/solr\/ckan/' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
+    
+EOF
