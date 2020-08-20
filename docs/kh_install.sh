@@ -131,8 +131,8 @@ sed -e 's/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_defa
 ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
 EOF
 
+sudo -u ckan bash << EOF
 . /usr/lib/ckan/default/bin/activate
 cd /usr/lib/ckan/default/src/ckan
 paster db init -c /etc/ckan/default/production.ini
-
-
+EOF
