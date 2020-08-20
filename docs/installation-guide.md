@@ -77,6 +77,7 @@ sudo apt install postgresql libpq-dev python-pip python-virtualenv git redis-ser
 
 **CentoOS 7**
 ```bash
+sudo yum install epel-release
 sudo yum install -y python-devel postgresql-server postgresql-contrib python-pip python-virtualenv postgresql-devel git redis postgis wget lsof policycoreutils-python java-1.8.0-openjdk
 sudo yum install -y nginx httpd
 sudo yum groupinstall 'Development Tools'
