@@ -25,10 +25,11 @@ chmod 755 /usr/lib/ckan/data
 semanage fcontext -a -t httpd_sys_rw_content_t "/usr/lib/ckan/data(/.*)?"
 restorecon -R /usr/lib/ckan/data
 
-sudo su -s /bin/bash - ckan bash << EOF
+sudo -u ckan bash << EOF
 cd /usr/lib/ckan/
 virtualenv --no-site-packages default
 EOF
 
 . /usr/lib/ckan/default/bin/activate
+
 
