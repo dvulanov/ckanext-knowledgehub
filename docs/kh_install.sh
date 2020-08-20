@@ -50,8 +50,12 @@ sed -e 's/ ident/ md5/' \
 chmod 600 /var/lib/pgsql/data/pg_hba.conf
 chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf
 
-. /usr/lib/ckan/default/bin/activate
-
 sudo -u postgres << EOF
-createuser -S -D -R -p pgPW)(0 ckan_default
+echo "This is for ckan_default"
+createuser -S -D -R -P ckan_default
+createdb -O ckan_default ckan_default -E utf-8
+psql -d ckan_default -c "create extension postgis;"
+select PostGIS_version();
 EOF
+
+. /usr/lib/ckan/default/bin/activate
