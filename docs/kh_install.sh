@@ -109,7 +109,7 @@ sudo -u solr bash << EOF
 cd /opt/apps/solr/6.5.1/server/solr/ckan/conf/
 wget https://raw.githubusercontent.com/keitaroinc/ckanext-knowledgehub/master/ckanext/knowledgehub/schema.xml
 mv solrconfig.xml solrconfig.xml.bak
-wget https://github.com/keitaroinc/ckanext-knowledgehub/blob/master/docs/solrconfig.xml
+wget https://raw.githubusercontent.com/keitaroinc/ckanext-knowledgehub/master/docs/solrconfig.xml
 EOF
 
 systemctl restart solr
