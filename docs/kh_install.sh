@@ -52,4 +52,6 @@ chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf
 
 . /usr/lib/ckan/default/bin/activate
 
-
+sudo -u postgres << EOF
+createuser -S -D -R -p pgPW)(0 ckan_default
+EOF
