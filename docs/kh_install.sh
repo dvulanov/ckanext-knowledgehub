@@ -98,10 +98,11 @@ User=solr
 [Install]
 WantedBy=multi-user.target
 " > /etc/systemd/system/solr.service
-sudo chmod 664 /etc/systemd/system/solr.service
 
-sudo systemctl enable solr
-sudo systemctl start solr
+chmod 664 /etc/systemd/system/solr.service
+
+systemctl enable solr
+systemctl start solr
 
 sudo -u solr bash << EOF
 /opt/apps/solr/6.5.1/bin/solr create_core -c ckan
@@ -129,5 +130,9 @@ sed -e 's/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_defa
 
 ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
 EOF
+
+. /usr/lib/ckan/default/bin/activate
+cd /usr/lib/ckan/default/src/ckan
+paster db init -c /etc/ckan/default/production.ini
 
 
