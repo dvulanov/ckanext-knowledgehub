@@ -43,7 +43,7 @@ deactivate
 
 echo "fix postgres config"
 mv /var/lib/pgsql/data/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf.bak
-sed -e 's/ ident/md5/' \
+sed -e 's/ ident/ md5/' \
     -e 's/#local/local/' \
     -e 's/#host/host/'  /var/lib/pgsql/data/pg_hba.conf.bak >> /var/lib/pgsql/data/pg_hba.conf/var/lib/pgsql/data/pg_hba.conf
 
