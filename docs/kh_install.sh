@@ -13,12 +13,22 @@ systemctl enable postgresql
 systemctl start postgresql
 
 echo "Init ckan env"
-useradd -m -s /bin/bash ckan
+useradd -m -s /sbin/nologin -d /usr/lib/ckan -c "CKAN User" ckan
+chmod 755 /usr/lib/ckan
+mkdir -p /etc/ckan/default
+chown -R ckan /etc/ckan
 
-sudo -i -u ckan bash << EOF
-mkdir -p ~/ckan/lib
-mkdir -p ~/ckan/etc
+mkdir /usr/lib/ckan/data
+chown apache:apache /usr/lib/ckan/data
+chmod 755 /usr/lib/ckan/data
+
+semanage fcontext -a -t httpd_sys_rw_content_t "/usr/lib/ckan/data(/.*)?"
+restorecon -R /usr/lib/ckan/data
+
+sudo su -s /bin/bash - ckan bash << EOF
+cd /usr/lib/ckan/
+virtualenv --no-site-packages default
 EOF
 
-ln -s /home/ckan/ckan/lib /usr/lib/ckan
-ln -s /home/ckan/ckan/etc /etc/ckan
+. /usr/lib/ckan/default/bin/activate
+
