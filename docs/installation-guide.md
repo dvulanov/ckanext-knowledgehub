@@ -260,6 +260,7 @@ deactivate
 ```
 
 ### 3.2 Setup PostgreSQL Database
+(This section gave me a bit of issues)
 
 First go back and login with the sudoer user - we're going to need to run commands and super user.
 
@@ -273,18 +274,20 @@ Check that the encoding of databases is `UTF8`, if not internationalization may 
 
 Now, create the user for CKAN, and enter the user password when prompted for it:
 ```bash
-sudo -u postgres createuser -S -D -R -P ckan_default
+sudo -u postgres
+createuser -S -D -R -P ckan_default
 ```
 
 Finally, enable the PostGIS extension on the ckan_default database:
 ```bash
+(I might not have to do this again)
 sudo -i -u postgres
 
 ```
 Create the database:
 
 ```bash
-sudo -u postgres createdb -O ckan_default ckan_default -E utf-8
+createdb -O ckan_default ckan_default -E utf-8
 ```
 
 
@@ -307,8 +310,10 @@ You should see output like this:
 (1 row)
 
 ```
+Exit psql with Ctrl-D
 
 ### 3.3 Create CKAN DataStore database
+(This section gave me a bit of issues)
 
 This creates the Data Store database and creates two types of access to it: read-only and read-write.
 
@@ -505,6 +510,7 @@ mkdir /home/ckan/data
 
 **On CentOS:**
 ```
+(already exists)
 mkdir /usr/lib/ckan/data
 ```
 
@@ -548,7 +554,7 @@ ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
 ```
 
 ### 3.5 Create CKAN Database tables
-
+(This step isn't working)
 This step is important to be performed immeditely after installing CKAN, before any additional extensions are installed.
 
 This installs the core CKAN tables. If additional estensions are enabled at this point, there is a possibility that those plugins would require the base tables to be installed and may cause an error to be thrown.
