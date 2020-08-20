@@ -57,15 +57,14 @@ sed -e 's/ ident/ md5/' \
 chmod 600 /var/lib/pgsql/data/pg_hba.conf
 chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf
 
-systemctl start postgresql
+systemctl restart postgresql
 
 sudo -u postgres bash << EOF
 echo "This is for ckan_default"
 createuser -S -D -R -P ckan_default
 createdb -O ckan_default ckan_default -E utf-8
 psql -d ckan_default -c "create extension postgis;"
-select PostGIS_version();
-
+psql -d ckan_default -c "select PostGIS_version();"
 echo "This is for datastore_default"
 createuser -S -D -R -P -l datastore_default
 createdb -O ckan_default datastore_default -E utf-8
