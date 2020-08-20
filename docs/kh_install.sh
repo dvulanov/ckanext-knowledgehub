@@ -50,6 +50,8 @@ sed -e 's/ ident/ md5/' \
 chmod 600 /var/lib/pgsql/data/pg_hba.conf
 chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf
 
+systemctl start postgresql
+
 sudo -u postgres bash << EOF
 echo "This is for ckan_default"
 createuser -S -D -R -P ckan_default
