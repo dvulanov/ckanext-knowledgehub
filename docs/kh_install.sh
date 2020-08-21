@@ -35,7 +35,6 @@ restorecon -R /usr/lib/ckan/data
 sudo -u ckan bash << EOF
 cd /usr/lib/ckan/
 virtualenv --no-site-packages default
-EOF
 
 . /usr/lib/ckan/default/bin/activate
 
@@ -47,6 +46,7 @@ pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.8.2#egg=ckan'
 pip install -r /usr/lib/ckan/default/src/ckan/requirements.txt
 
 deactivate
+EOF
 
 echo "fix postgres config"
 mv /var/lib/pgsql/data/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf.bak
@@ -121,9 +121,9 @@ sudo -u ckan bash << EOF
 paster make-config ckan /etc/ckan/default/production.ini
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 
-sed -e 's/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_default/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_default?sslmode=disable/' \
+sed -e 's/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_default/sqlalchemy.url = postgresql:\/\/ckan_default:password@localhost\/ckan_default?sslmode=disable/' \
     -e 's/ckan.site_url =/ckan.site_url = http:\/\/knowledgehub.unhcr.org/' \
-    -e 's/ckan.site_id = default/ckan.site_id=unhcr_knowledgehub/' \
+    -e 's/ckan.site_id = default/ckan.site_id = unhcr_knowledgehub/' \
     -e 's/#ckan.datastore.write_url/ckan.datastore.write_url/' \
     -e 's/#ckan.datastore.read_url/ckan.datastore.read_url/' \
     -e 's/#solr_url = http:\/\/127.0.0.1:8983\/solr/solr_url = http:\/\/127.0.0.1:8983\/solr\/ckan/' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini 
