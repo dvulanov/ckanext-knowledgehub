@@ -121,6 +121,7 @@ chown -R ckan /etc/ckan/
 
 sudo -u ckan bash << EOF
 . /usr/lib/ckan/default/bin/activate
+
 paster make-config ckan /etc/ckan/default/production.ini
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 
@@ -132,13 +133,30 @@ sed -e 's/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_defa
     -e 's/#solr_url = http:\/\/127.0.0.1:8983\/solr/solr_url = http:\/\/127.0.0.1:8983\/solr\/ckan/' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini 
 
 ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
+
 deactivate
 EOF
 
 sudo -u ckan bash << EOF
 . /usr/lib/ckan/default/bin/activate
+
 cd /usr/lib/ckan/default/src/ckan
 paster db init -c /etc/ckan/default/production.ini
 paster --plugin=ckan datastore set-permissions -c /etc/ckan/default/production.ini | psql -h localhost -U ckan_default -d ckan_default
+
 deactivate
 EOF
+
+echo "Installing ckan extensions"
+sudo -u ckan bash << EOF
+. /usr/lib/ckan/default/bin/activate
+
+pip install --no-cache-dir -e "git+https://github.com/frictionlessdata/ckanext-validation.git#egg=ckanext-validation"
+cd /usr/lib/ckan/default/
+pip install -r src/ckanext-validation/requirements.txt
+cd src/ckanext-validation/
+paster validation init-db -c /etc/ckan/default/production.ini
+
+deactivate
+EOF
+
