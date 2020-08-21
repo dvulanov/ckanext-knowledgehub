@@ -19,6 +19,9 @@ postgresql-setup initdb
 systemctl enable postgresql
 systemctl start postgresql
 
+systemctl enable redis
+systemctl start redis
+
 echo "Init ckan env"
 useradd -m -s /sbin/nologin -d /usr/lib/ckan -c "CKAN User" ckan
 chmod 755 /usr/lib/ckan
@@ -136,5 +139,6 @@ sudo -u ckan bash << EOF
 . /usr/lib/ckan/default/bin/activate
 cd /usr/lib/ckan/default/src/ckan
 paster db init -c /etc/ckan/default/production.ini
+paster --plugin=ckan datastore set-permissions -c /etc/ckan/default/production.ini | psql -h localhost -U ckan_default -d ckan_default
 deactivate
 EOF
