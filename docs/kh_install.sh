@@ -36,7 +36,7 @@ semanage fcontext -a -t httpd_sys_rw_content_t "/usr/lib/ckan/data(/.*)?"
 restorecon -R /usr/lib/ckan/data
 
 #####
-sudo -u ckan bash << EOF
+su -s /bin/bash - ckan << EOF
 cd /usr/lib/ckan/
 virtualenv --no-site-packages default
 
@@ -64,7 +64,7 @@ chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf
 systemctl restart postgresql
 
 #####
-sudo -u postgres bash << EOF
+su -s /bin/bash - ckan << EOF
 echo "This is for ckan_default"
 createuser -S -D -R -P ckan_default
 createdb -O ckan_default ckan_default -E utf-8
@@ -81,7 +81,7 @@ useradd -m -d /opt/apps/solr -s /bin/bash solr
 chown -R solr /opt/apps/solr
 
 #####
-sudo -u solr bash << EOF
+su -s /bin/bash - ckan << EOF
 cd /opt/apps/solr
 wget https://archive.apache.org/dist/lucene/solr/6.5.1/solr-6.5.1.tgz
 tar xzvf solr-6.5.1.tgz
@@ -111,7 +111,7 @@ systemctl enable solr
 systemctl start solr
 
 #####
-sudo -u solr bash << EOF
+su -s /bin/bash - ckan << EOF
 /opt/apps/solr/6.5.1/bin/solr create_core -c ckan
 cd /opt/apps/solr/6.5.1/server/solr/ckan/conf/
 wget https://raw.githubusercontent.com/keitaroinc/ckanext-knowledgehub/master/ckanext/knowledgehub/schema.xml
@@ -124,7 +124,7 @@ mkdir -p /etc/ckan/default
 chown -R ckan /etc/ckan/
 
 #####
-sudo -u ckan bash << EOF
+su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 
 paster make-config ckan /etc/ckan/default/production.ini
@@ -143,7 +143,7 @@ deactivate
 EOF
 
 #####
-sudo -u ckan bash << EOF
+su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 
 cd /usr/lib/ckan/default/src/ckan
@@ -155,7 +155,7 @@ EOF
 
 #####
 echo "Installing ckan Validation extensions"
-sudo -u ckan bash << EOF
+su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 
 pip install --no-cache-dir -e "git+https://github.com/frictionlessdata/ckanext-validation.git#egg=ckanext-validation"
@@ -169,7 +169,7 @@ EOF
 
 #####
 echo "modifying ckan config"
-sudo -u ckan bash << EOF
+su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 
 mv /etc/ckan/default/production.ini.bak /etc/ckan/default/production.ini.orig
@@ -181,7 +181,7 @@ EOF
 
 #####
 echo "Installing ckan Data Request extensions"
-sudo -u ckan bash << EOF
+su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 
 pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-datarequests.git@kh_stable#egg=ckanext-datarequests"
