@@ -35,6 +35,7 @@ chmod 755 /usr/lib/ckan/data
 semanage fcontext -a -t httpd_sys_rw_content_t "/usr/lib/ckan/data(/.*)?"
 restorecon -R /usr/lib/ckan/data
 
+#####
 sudo -u ckan bash << EOF
 cd /usr/lib/ckan/
 virtualenv --no-site-packages default
@@ -62,6 +63,7 @@ chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf
 
 systemctl restart postgresql
 
+#####
 sudo -u postgres bash << EOF
 echo "This is for ckan_default"
 createuser -S -D -R -P ckan_default
@@ -78,6 +80,7 @@ mkdir -p /opt/apps/solr
 useradd -m -d /opt/apps/solr -s /bin/bash solr
 chown -R solr /opt/apps/solr
 
+#####
 sudo -u solr bash << EOF
 cd /opt/apps/solr
 wget https://archive.apache.org/dist/lucene/solr/6.5.1/solr-6.5.1.tgz
@@ -107,6 +110,7 @@ chmod 664 /etc/systemd/system/solr.service
 systemctl enable solr
 systemctl start solr
 
+#####
 sudo -u solr bash << EOF
 /opt/apps/solr/6.5.1/bin/solr create_core -c ckan
 cd /opt/apps/solr/6.5.1/server/solr/ckan/conf/
@@ -119,6 +123,7 @@ systemctl restart solr
 mkdir -p /etc/ckan/default
 chown -R ckan /etc/ckan/
 
+#####
 sudo -u ckan bash << EOF
 . /usr/lib/ckan/default/bin/activate
 
@@ -137,6 +142,7 @@ ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
 deactivate
 EOF
 
+#####
 sudo -u ckan bash << EOF
 . /usr/lib/ckan/default/bin/activate
 
@@ -147,7 +153,8 @@ paster --plugin=ckan datastore set-permissions -c /etc/ckan/default/production.i
 deactivate
 EOF
 
-echo "Installing ckan extensions"
+#####
+echo "Installing ckan Validation extensions"
 sudo -u ckan bash << EOF
 . /usr/lib/ckan/default/bin/activate
 
@@ -160,3 +167,28 @@ paster validation init-db -c /etc/ckan/default/production.ini
 deactivate
 EOF
 
+#####
+echo "modifying ckan config"
+sudo -u ckan bash << EOF
+. /usr/lib/ckan/default/bin/activate
+
+mv /etc/ckan/default/production.ini.bak /etc/ckan/default/production.ini.orig
+mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
+awk '/ckan.plugins = stats text_view image_view recline_view/ {print; print "ckan.plugins = recline_view validation stats"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
+
+deactivate
+EOF
+
+#####
+echo "Installing ckan Data Request extensions"
+sudo -u ckan bash << EOF
+. /usr/lib/ckan/default/bin/activate
+
+pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-datarequests.git@kh_stable#egg=ckanext-datarequests"
+mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
+awk '/ckan.plugins = recline_view validation stats/ {print; print "ckan.plugins = recline_view validation stats datarequests"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
+
+pip install humanize==1.0.0
+
+deactivate
+EOF
