@@ -36,7 +36,7 @@ semanage fcontext -a -t httpd_sys_rw_content_t "/usr/lib/ckan/data(/.*)?"
 restorecon -R /usr/lib/ckan/data
 
 #####
-su -s /bin/bash - ckan << EOF #sudo -u ckan bash << EOF
+su -s /bin/bash - ckan << EOF
 cd /usr/lib/ckan/
 virtualenv --no-site-packages default
 
@@ -64,7 +64,7 @@ chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf
 systemctl restart postgresql
 
 #####
-su -s /bin/bash - postgres << EOF # sudo -u postgres bash << EOF
+su -s /bin/bash - postgres << EOF
 echo "This is for ckan_default"
 createuser -S -D -R -P ckan_default
 createdb -O ckan_default ckan_default -E utf-8
@@ -81,7 +81,7 @@ useradd -m -d /opt/apps/solr -s /bin/bash solr
 chown -R solr /opt/apps/solr
 
 #####
-su -s /bin/bash - solr << EOF #sudo -u solr bash << EOF
+su -s /bin/bash - solr << EOF
 cd /opt/apps/solr
 wget https://archive.apache.org/dist/lucene/solr/6.5.1/solr-6.5.1.tgz
 tar xzvf solr-6.5.1.tgz
@@ -111,7 +111,7 @@ systemctl enable solr
 systemctl start solr
 
 #####
-su -s /bin/bash - solr << EOF # sudo -u solr bash << EOF
+su -s /bin/bash - solr << EOF
 /opt/apps/solr/6.5.1/bin/solr create_core -c ckan
 cd /opt/apps/solr/6.5.1/server/solr/ckan/conf/
 wget https://raw.githubusercontent.com/keitaroinc/ckanext-knowledgehub/master/ckanext/knowledgehub/schema.xml
@@ -128,14 +128,17 @@ su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 
 paster make-config ckan /etc/ckan/default/production.ini
-mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
+mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.orig
 
 sed -e 's/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_default/sqlalchemy.url = postgresql:\/\/ckan_default:password@localhost\/ckan_default?sslmode=disable/' \
     -e 's/ckan.site_url =/ckan.site_url = http:\/\/knowledgehub.unhcr.org/' \
     -e 's/ckan.site_id = default/ckan.site_id = unhcr_knowledgehub/' \
     -e 's/#ckan.datastore.write_url/ckan.datastore.write_url/' \
     -e 's/#ckan.datastore.read_url/ckan.datastore.read_url/' \
-    -e 's/#solr_url = http:\/\/127.0.0.1:8983\/solr/solr_url = http:\/\/127.0.0.1:8983\/solr\/ckan/' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini 
+    -e 's/#solr_url = http:\/\/127.0.0.1:8983\/solr/solr_url = http:\/\/127.0.0.1:8983\/solr\/ckan/' /etc/ckan/default/production.ini.orig > /etc/ckan/default/production.ini 
+
+mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
+sed -e 's/_default:pass@/_default:password@/' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini 
 
 ln -s /usr/lib/ckan/default/src/ckan/who.ini /etc/ckan/default/who.ini
 
@@ -164,31 +167,73 @@ pip install -r src/ckanext-validation/requirements.txt
 cd src/ckanext-validation/
 paster validation init-db -c /etc/ckan/default/production.ini
 
-deactivate
-EOF
-
-#####
-echo "modifying ckan config"
-su -s /bin/bash - ckan << EOF
-. /usr/lib/ckan/default/bin/activate
-
-mv /etc/ckan/default/production.ini.bak /etc/ckan/default/production.ini.orig
-mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
-awk '/ckan.plugins = stats text_view image_view recline_view/ {print; print "ckan.plugins = recline_view validation stats"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
+#mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
+#awk '/ckan.plugins = / {print "ckan.plugins = text_view image_view recline_view validation stats"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
 
 deactivate
 EOF
 
 #####
-echo "Installing ckan Data Request extensions"
+echo "Installing ckan Data Request OAuth2 extensions"
 su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 
 pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-datarequests.git@kh_stable#egg=ckanext-datarequests"
-mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
-awk '/ckan.plugins = recline_view validation stats/ {print; print "ckan.plugins = recline_view validation stats datarequests"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
-
 pip install humanize==1.0.0
+
+pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-oauth2.git@kh_stable#egg=ckanext-oauth2"
+
+echo "
+
+# OAuth2 settings
+ckan.oauth2.register_url = https://YOUR_OAUTH_SERVICE/users/sign_up
+ckan.oauth2.reset_url = https://YOUR_OAUTH_SERVICE/users/password/new
+ckan.oauth2.edit_url = https://YOUR_OAUTH_SERVICE/settings
+ckan.oauth2.authorization_endpoint = https://YOUR_OAUTH_SERVICE/authorize
+ckan.oauth2.token_endpoint = https://YOUR_OAUTH_SERVICE/token
+ckan.oauth2.profile_api_url = https://YOUR_OAUTH_SERVICE/user
+ckan.oauth2.client_id = YOUR_CLIENT_ID
+ckan.oauth2.client_secret = YOUR_CLIENT_SECRET
+ckan.oauth2.scope = profile other.scope
+ckan.oauth2.rememberer_name = auth_tkt
+ckan.oauth2.profile_api_user_field = JSON_FIELD_TO_FIND_THE_USER_IDENTIFIER
+ckan.oauth2.profile_api_fullname_field = JSON_FIELD_TO_FIND_THE_USER_FULLNAME
+ckan.oauth2.profile_api_mail_field = JSON_FIELD_TO_FIND_THE_USER_MAIL
+ckan.oauth2.authorization_header = OAUTH2_HEADER
+" >> /etc/ckan/default/production.ini
+
+deactivate
+EOF
+
+#####
+su -s /bin/bash - ckan << EOF
+. /usr/lib/ckan/default/bin/activate
+
+pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-knowledgehub.git#egg=ckanext-knowledgehub"
+
+# Due to some of the packages requiring newer version of setuptools, we need to uninstall, then reinstall setuptools
+pip uninstall setuptools -y
+pip install setuptools
+
+pip install --no-cache-dir -r "/usr/lib/ckan/default/src/ckanext-knowledgehub/requirements.txt" 
+
+pip uninstall psycopg2-binary -y
+pip uninstall psycopg2 -y
+pip install --no-cache-dir psycopg2==2.7.3.2
+
+python -m spacy download en_core_web_sm
+
+knowledgehub -c /etc/ckan/default/production.ini db init
+
+deactivate
+EOF
+
+#####
+su -s /bin/bash - ckan << EOF
+. /usr/lib/ckan/default/bin/activate
+
+mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
+awk '/ckan.plugins = / {print "ckan.plugins = recline_view validation knowledgehub stats datastore datapusher datarequests oauth2"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
 
 deactivate
 EOF
