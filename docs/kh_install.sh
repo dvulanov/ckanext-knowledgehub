@@ -167,9 +167,6 @@ pip install -r src/ckanext-validation/requirements.txt
 cd src/ckanext-validation/
 paster validation init-db -c /etc/ckan/default/production.ini
 
-#mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
-#awk '/ckan.plugins = / {print "ckan.plugins = text_view image_view recline_view validation stats"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
-
 deactivate
 EOF
 
@@ -200,6 +197,7 @@ ckan.oauth2.profile_api_user_field = JSON_FIELD_TO_FIND_THE_USER_IDENTIFIER
 ckan.oauth2.profile_api_fullname_field = JSON_FIELD_TO_FIND_THE_USER_FULLNAME
 ckan.oauth2.profile_api_mail_field = JSON_FIELD_TO_FIND_THE_USER_MAIL
 ckan.oauth2.authorization_header = OAUTH2_HEADER
+
 " >> /etc/ckan/default/production.ini
 
 deactivate
@@ -232,8 +230,23 @@ EOF
 su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 
+echo "
+
+# HDX API keys
+ckanext.knowledgehub.hdx.api_key = <HDX_API_KEY>
+ckanext.knowledgehub.hdx.site = test
+ckanext.knowledgehub.hdx.owner_org = <HDX_OWNER_ORG_ID>
+ckanext.knowledgehub.hdx.dataset_source = knowledgehub
+ckanext.knowledgehub.hdx.maintainer = <HDX_USER_NAME>
+
+" >> /etc/ckan/default/production.ini
+
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk '/ckan.plugins = / {print "ckan.plugins = recline_view validation knowledgehub stats datastore datapusher datarequests oauth2"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
+
+mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
+sed -e 's/#smtp.startttls = False/#smtp.startttls = True/' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini 
+
 
 deactivate
 EOF
