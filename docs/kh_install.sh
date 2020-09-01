@@ -165,6 +165,7 @@ pip install --no-cache-dir -e "git+https://github.com/frictionlessdata/ckanext-v
 cd /usr/lib/ckan/default/
 pip install -r src/ckanext-validation/requirements.txt
 cd src/ckanext-validation/
+
 paster validation init-db -c /etc/ckan/default/production.ini
 
 deactivate
