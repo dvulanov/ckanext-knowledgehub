@@ -11,7 +11,7 @@ echo "Welcome to my amazing script that does awesomeness and creates Knowledge H
 echo "Base pkg install ..."
 yum install -y epel-release
 yum install -y python-devel postgresql-server postgresql-contrib python-pip python-virtualenv postgresql-devel git redis postgis wget lsof policycoreutils-python java-1.8.0-openjdk
-yum install -y nginx httpd
+yum install -y nginx httpd mod_wsgi
 yum groupinstall -y 'Development Tools'
 
 echo "Init postgresql"
@@ -246,7 +246,7 @@ mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk '/ckan.plugins = / {print "ckan.plugins = recline_view validation knowledgehub stats datastore datapusher datarequests oauth2"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
 
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
-sed -e 's/#smtp.startttls = False/#smtp.startttls = True/' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini 
+sed -e 's/#smtp.starttls = False/#smtp.starttls = True/' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini 
 
 
 deactivate
