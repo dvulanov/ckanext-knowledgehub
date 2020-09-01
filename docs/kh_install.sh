@@ -456,6 +456,23 @@ deactivate
 EOF
 
 systemctl restart httpd
+curl http://localhost:8800
 
+#####
+su -s /bin/bash - ckan << EOF
+. /usr/lib/ckan/default/bin/activate
+
+cd /usr/lib/ckan/default/src/ckan
+
+# Add the user
+paster --plugin=ckan user add ckan_admin email=ckan_admin@knowledgehb.org -c /etc/ckan/default/production.ini
+
+# Set the user `ckan_admin` as sysadmin
+paster --plugin=ckan sysadmin add ckan_admin -c /etc/ckan/default/production.ini
+
+deactivate
+EOF
+
+echo "Config Workers"
 
 
