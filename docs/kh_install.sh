@@ -391,12 +391,71 @@ setsebool httpd_can_network_connect on -P
 systemctl start httpd
 systemctl start nginx
 
+echo "Install Datapusher"
 
+yum install -y libxslt-devel libxml2-devel libffi-devel
 
+#####
+su -s /bin/bash - ckan << EOF
+virtualenv /usr/lib/ckan/datapusher
+mkdir /usr/lib/ckan/datapusher/src
+cd /usr/lib/ckan/datapusher/src
+git clone -b 0.0.16 https://github.com/ckan/datapusher.git
 
+. /usr/lib/ckan/datapusher/bin/activate
+cd datapusher
+pip install -r requirements.txt
+python setup.py develop
 
+deactivate
+EOF
 
+echo "
+<VirtualHost 0.0.0.0:8800>
 
+    ServerName ckan
+
+    # this is our app
+    WSGIScriptAlias / /etc/ckan/datapusher.wsgi
+
+    # pass authorization info on (needed for rest api)
+    WSGIPassAuthorization On
+
+    # Deploy as a daemon (avoids conflicts between CKAN instances)
+    WSGIDaemonProcess datapusher display-name=demo processes=1 threads=15
+
+    WSGIProcessGroup datapusher
+
+    ErrorLog /var/log/httpd/datapusher.error.log
+    CustomLog /var/log/httpd/datapusher.custom.log combined
+
+    <Directory /etc/ckan>
+    Options All
+    AllowOverride All
+    Require all granted
+    </Directory>
+</VirtualHost>
+" > /etc/httpd/conf.d/datapusher.conf
+
+cp /usr/lib/ckan/datapusher/src/datapusher/deployment/datapusher.wsgi /etc/ckan/
+cp /usr/lib/ckan/datapusher/src/datapusher/deployment/datapusher_settings.py /etc/ckan/
+
+mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.bak
+awk '/Listen 8080/ {print; print "Listen 8800"; next}1' /etc/httpd/conf/httpd.conf.bak > /etc/httpd/conf/httpd.conf
+
+semanage port -a -t http_port_t -p tcp 8800
+
+#####
+su -s /bin/bash - ckan << EOF
+. /usr/lib/ckan/default/bin/activate
+
+mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
+sed -e 's/#ckan.datapusher.url/ckan.datapusher.url/' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini 
+
+deactivate
+EOF
+
+systemctl restart httpd
 
 
 
