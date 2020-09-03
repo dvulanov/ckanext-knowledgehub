@@ -342,9 +342,9 @@ events {
 }
 
 http {
-    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                      '$status $body_bytes_sent "$http_referer" '
-                      '"$http_user_agent" "$http_x_forwarded_for"';
+    log_format  main  '\$remote_addr - \$remote_user [\$time_local] \"\$request\" '
+                      '\$status \$body_bytes_sent \"\$http_referer\" '
+                      '\"\$http_user_agent\" \"\$http_x_forwarded_for\"';
 
     access_log  /var/log/nginx/access.log  main;
 
@@ -377,13 +377,13 @@ server {
     client_max_body_size 100M;
     location / {
         proxy_pass http://127.0.0.1:8080/;
-        proxy_set_header X-Forwarded-For $remote_addr;
-        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For \$remote_addr;
+        proxy_set_header Host \$host;
         proxy_cache cache;
-        proxy_cache_bypass $cookie_auth_tkt;
-        proxy_no_cache $cookie_auth_tkt;
+        proxy_cache_bypass \$cookie_auth_tkt;
+        proxy_no_cache \$cookie_auth_tkt;
         proxy_cache_valid 30m;
-        proxy_cache_key $host$scheme$proxy_host$request_uri;
+        proxy_cache_key \$host\$scheme\$proxy_host\$request_uri;
         # In emergency comment out line to force caching
         # proxy_ignore_headers X-Accel-Expires Expires Cache-Control;
     }
