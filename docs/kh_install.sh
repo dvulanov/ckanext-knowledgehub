@@ -11,7 +11,7 @@ echo "Welcome to my amazing script that does awesomeness and creates Knowledge H
 echo "Base pkg install ..."
 yum install -y epel-release
 yum install -y python-devel postgresql-server postgresql-contrib python-pip python-virtualenv postgresql-devel git redis postgis wget lsof policycoreutils-python java-1.8.0-openjdk
-yum install -y nginx httpd mod_wsgi
+yum install -y nginx httpd mod_wsgi firewalld
 yum groupinstall -y 'Development Tools'
 
 echo "Init postgresql"
@@ -19,6 +19,8 @@ postgresql-setup initdb
 systemctl enable postgresql
 systemctl start postgresql
 
+systemctl enable firewalld
+systemctl start firewalld
 systemctl enable redis
 systemctl start redis
 
@@ -307,12 +309,10 @@ echo "
 </VirtualHost>
 " > /etc/httpd/conf.d/knowledgehub.prodtest.unhcr.org.conf
 
-systemctl enable httpd
-systemctl enable nginx
 
 firewall-cmd --permanent --add-service=http
 
-mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.orig
+mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.orig
 sed -e 's/Listen 80/Listen 8080/' /etc/httpd/conf/httpd.conf.orig > /etc/httpd/conf/httpd.conf
 
 echo "Config nginx"
@@ -390,6 +390,9 @@ setsebool httpd_can_network_connect on -P
 
 systemctl start httpd
 systemctl start nginx
+
+systemctl enable httpd
+systemctl enable nginx
 
 echo "Install Datapusher"
 
