@@ -97,7 +97,7 @@ mv solr-6.5.1 6.5.1  # Rename to the version so we get nice path `/opt/apps/solr
 rm solr-6.5.1.tgz  # Remove the downloaded archive
 EOF
 
-sudo echo "
+echo "
 [Unit]
 Description=Apache Solr
 After=network.target
