@@ -9,6 +9,7 @@ trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
 
 echo "Welcome to my amazing script that does awesomeness and creates Knowledge Hub"
 echo "Base pkg install ..."
+yup -y update
 yum install -y epel-release
 yum install -y python-devel postgresql-server postgresql-contrib python-pip python-virtualenv postgresql-devel git redis postgis wget lsof policycoreutils-python java-1.8.0-openjdk
 yum install -y nginx httpd mod_wsgi firewalld
