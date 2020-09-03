@@ -24,6 +24,9 @@ systemctl start firewalld
 systemctl enable redis
 systemctl start redis
 
+systemctl enable httpd
+systemctl start httpd
+
 echo "Init ckan env"
 useradd -m -s /sbin/nologin -d /usr/lib/ckan -c "CKAN User" ckan
 chmod 755 /usr/lib/ckan
@@ -391,10 +394,8 @@ ln -s /etc/nginx/sites-available/ckan.conf /etc/nginx/sites-enabled/ckan.conf
 
 setsebool httpd_can_network_connect on -P
 
-systemctl start httpd
+systemctl restart httpd
 systemctl start nginx
-
-systemctl enable httpd
 systemctl enable nginx
 
 echo "Install Datapusher"
