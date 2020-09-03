@@ -66,14 +66,17 @@ chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf
 systemctl restart postgresql
 
 #####
+sudo -i -u postgres psql -c "CREATE USER ckan_default WITH PASSWORD 'password';"
+sudo -i -u postgres psql -c "CREATE USER datastore_default WITH PASSWORD 'password';"
+
 su -s /bin/bash - postgres << EOF
 echo "This is for ckan_default"
-createuser -S -D -R -P ckan_default
+#createuser -S -D -R -P ckan_default
 createdb -O ckan_default ckan_default -E utf-8
 psql -d ckan_default -c "create extension postgis;"
 psql -d ckan_default -c "select PostGIS_version();"
 echo "This is for datastore_default"
-createuser -S -D -R -P -l datastore_default
+#createuser -S -D -R -P -l datastore_default
 createdb -O ckan_default datastore_default -E utf-8
 EOF
 
