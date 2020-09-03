@@ -69,8 +69,8 @@ chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf
 systemctl restart postgresql
 
 #####
-sudo -i -u postgres psql -c "CREATE USER ckan_default WITH PASSWORD 'password';"
-sudo -i -u postgres psql -c "CREATE USER datastore_default WITH PASSWORD 'password';"
+sudo -i -u postgres psql -c "CREATE USER ckan_default WITH NOSUPERUSER NOCREATEDB NOCREATEROLE PASSWORD 'password';"
+sudo -i -u postgres psql -c "CREATE USER datastore_default WITH NOSUPERUSER NOCREATEDB NOCREATEROLE PASSWORD 'password';"
 
 su -s /bin/bash - postgres << EOF
 echo "This is for ckan_default"
