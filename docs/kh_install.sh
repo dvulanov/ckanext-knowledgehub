@@ -203,10 +203,10 @@ ckan.oauth2.client_id = YOUR_CLIENT_ID
 ckan.oauth2.client_secret = YOUR_CLIENT_SECRET
 ckan.oauth2.scope = profile other.scope
 ckan.oauth2.rememberer_name = auth_tkt
-ckan.oauth2.profile_api_user_field = JSON_FIELD_TO_FIND_THE_USER_IDENTIFIER
-ckan.oauth2.profile_api_fullname_field = JSON_FIELD_TO_FIND_THE_USER_FULLNAME
-ckan.oauth2.profile_api_mail_field = JSON_FIELD_TO_FIND_THE_USER_MAIL
-ckan.oauth2.authorization_header = OAUTH2_HEADER
+ckan.oauth2.profile_api_user_field = username
+ckan.oauth2.profile_api_fullname_field = full_name
+ckan.oauth2.profile_api_mail_field = email
+ckan.oauth2.authorization_header = Authorization
 
 " >> /etc/ckan/default/production.ini
 
