@@ -18,5 +18,7 @@ pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-datareq
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk '/ckan.plugins = / {print "ckan.plugins = recline_view validation stats datarequests"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
 
+pip install humanize==1.0.0
+
 deactivate
 EOF
