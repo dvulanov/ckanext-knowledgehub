@@ -14,7 +14,6 @@ echo "Installing ckan Data Request OAuth2 extensions"
 su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 
-pip install humanize==1.0.0
 pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-oauth2.git@kh_stable#egg=ckanext-oauth2"
 echo "
 # OAuth2 settings
