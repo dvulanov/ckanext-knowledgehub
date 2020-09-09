@@ -9,13 +9,6 @@ trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
 
 echo "Welcome to my amazing script that does awesomeness and creates Knowledge Hub"
 
-#####
-echo "Installing ckan Data Request OAuth2 extensions"
-su -s /bin/bash - ckan << EOF
-. /usr/lib/ckan/default/bin/activate
-
-pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-oauth2.git@kh_stable#egg=ckanext-oauth2"
-
 AUTHCONF="\
 # OAuth2 settings
 ckan.oauth2.register_url = https://YOUR_OAUTH_SERVICE/users/sign_up
@@ -36,6 +29,16 @@ ckan.oauth2.authorization_header = Authorization
 
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk -v patch="$AUTHCONF" '/## Logging configuration/ {print patch; print; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
+
+chown ckan:ckan /etc/ckan/default/production.ini
+chown ckan:ckan /etc/ckan/default/production.ini.bak
+
+#####
+echo "Installing ckan Data Request OAuth2 extensions"
+su -s /bin/bash - ckan << EOF
+. /usr/lib/ckan/default/bin/activate
+
+pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-oauth2.git@kh_stable#egg=ckanext-oauth2"
 
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk '/ckan.plugins = / {print "ckan.plugins = recline_view validation stats datarequests oauth2"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
