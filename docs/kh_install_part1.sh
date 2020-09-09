@@ -124,6 +124,8 @@ EOF
 systemctl restart solr
 mkdir -p /etc/ckan/default
 chown -R ckan /etc/ckan/
+mkdir /var/lib/ckan
+chown ckan:ckan /var/lib/ckan
 
 #####
 su -s /bin/bash - ckan << EOF
@@ -135,6 +137,7 @@ sed -e 's/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_defa
     -e 's/ckan.site_id = default/ckan.site_id = unhcr_knowledgehub/' \
     -e 's/#ckan.datastore.write_url/ckan.datastore.write_url/' \
     -e 's/#ckan.datastore.read_url/ckan.datastore.read_url/' \
+    -e 's/#ckan.storage_path/ckan.storage_path/' \
     -e 's/#solr_url = http:\/\/127.0.0.1:8983\/solr/solr_url = http:\/\/127.0.0.1:8983\/solr\/ckan/' /etc/ckan/default/production.ini.orig > /etc/ckan/default/production.ini 
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 sed -e 's/_default:pass@/_default:password@/' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini 
