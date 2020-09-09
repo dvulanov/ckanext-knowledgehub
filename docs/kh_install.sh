@@ -197,6 +197,7 @@ echo "
 ############################################
 Part 4: OAuth2 Extention
 ############################################
+"
 AUTHCONF="\
 # OAuth2 settings
 ckan.oauth2.register_url = https://YOUR_OAUTH_SERVICE/users/sign_up
