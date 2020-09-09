@@ -26,10 +26,6 @@ knowledgehub -c /etc/ckan/default/production.ini db init
 deactivate
 EOF
 
-#####
-su -s /bin/bash - ckan << EOF
-. /usr/lib/ckan/default/bin/activate
-
 HDXCONF="\
 # HDX API keys
 ckanext.knowledgehub.hdx.api_key = <HDX_API_KEY>
@@ -41,6 +37,13 @@ ckanext.knowledgehub.hdx.maintainer = <HDX_USER_NAME>
 "
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk -v patch="$HDXCONF" '/## Logging configuration/ {print patch; print; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
+
+chown ckan:ckan /etc/ckan/default/production.ini
+chown ckan:ckan /etc/ckan/default/production.ini.bak
+
+#####
+su -s /bin/bash - ckan << EOF
+. /usr/lib/ckan/default/bin/activate
 
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk '/ckan.plugins = / {print "ckan.plugins = envvars recline_view validation knowledgehub stats datastore datapusher datarequests oauth2"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
