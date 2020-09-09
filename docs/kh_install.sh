@@ -247,6 +247,7 @@ Part 6: Knowledge Hub and Httpd / Nginx config
 "
 su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
+pip install ckanext-envvars
 pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-knowledgehub.git#egg=ckanext-knowledgehub"
 # Due to some of the packages requiring newer version of setuptools, we need to uninstall, then reinstall setuptools
 pip uninstall setuptools -y
@@ -272,7 +273,7 @@ ckanext.knowledgehub.hdx.dataset_source = knowledgehub
 ckanext.knowledgehub.hdx.maintainer = <HDX_USER_NAME>
 " >> /etc/ckan/default/production.ini
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
-awk '/ckan.plugins = / {print "ckan.plugins = recline_view validation knowledgehub stats datastore datapusher datarequests oauth2"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
+awk '/ckan.plugins = / {print "ckan.plugins = envvars recline_view validation knowledgehub stats datastore datapusher datarequests oauth2"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 sed -e 's/#smtp.starttls = False/#smtp.starttls = True/' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini 
 deactivate
