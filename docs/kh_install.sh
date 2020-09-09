@@ -197,13 +197,7 @@ echo "
 ############################################
 Part 4: OAuth2 Extention
 ############################################
-"
-su -s /bin/bash - ckan << EOF
-. /usr/lib/ckan/default/bin/activate
-
-pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-oauth2.git@kh_stable#egg=ckanext-oauth2"
-
-export AUTHCONF="\
+AUTHCONF="\
 # OAuth2 settings
 ckan.oauth2.register_url = https://YOUR_OAUTH_SERVICE/users/sign_up
 ckan.oauth2.reset_url = https://YOUR_OAUTH_SERVICE/users/password/new
@@ -222,6 +216,15 @@ ckan.oauth2.authorization_header = Authorization
 "
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk -v patch="$AUTHCONF" '/## Logging configuration/ {print patch; print; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
+
+chown ckan:ckan /etc/ckan/default/production.ini
+chown ckan:ckan /etc/ckan/default/production.ini.bak
+
+"
+su -s /bin/bash - ckan << EOF
+. /usr/lib/ckan/default/bin/activate
+
+pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-oauth2.git@kh_stable#egg=ckanext-oauth2"
 
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk '/ckan.plugins = / {print "ckan.plugins = recline_view validation stats datarequests oauth2"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
@@ -264,11 +267,7 @@ knowledgehub -c /etc/ckan/default/production.ini db init
 deactivate
 EOF
 
-#####
-su -s /bin/bash - ckan << EOF
-. /usr/lib/ckan/default/bin/activate
-
-export HDXCONF="\
+HDXCONF="\
 # HDX API keys
 ckanext.knowledgehub.hdx.api_key = <HDX_API_KEY>
 ckanext.knowledgehub.hdx.site = test
@@ -278,6 +277,13 @@ ckanext.knowledgehub.hdx.maintainer = <HDX_USER_NAME>
 "
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk -v patch="$HDXCONF" '/## Logging configuration/ {print patch; print; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
+
+chown ckan:ckan /etc/ckan/default/production.ini
+chown ckan:ckan /etc/ckan/default/production.ini.bak
+
+#####
+su -s /bin/bash - ckan << EOF
+. /usr/lib/ckan/default/bin/activate
 
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk '/ckan.plugins = / {print "ckan.plugins = envvars recline_view validation knowledgehub stats datastore datapusher datarequests oauth2"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
