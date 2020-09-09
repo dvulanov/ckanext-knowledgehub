@@ -203,7 +203,7 @@ su -s /bin/bash - ckan << EOF
 
 pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-oauth2.git@kh_stable#egg=ckanext-oauth2"
 
-AUTHCONF="\
+export AUTHCONF="\
 # OAuth2 settings
 ckan.oauth2.register_url = https://YOUR_OAUTH_SERVICE/users/sign_up
 ckan.oauth2.reset_url = https://YOUR_OAUTH_SERVICE/users/password/new
@@ -268,7 +268,7 @@ EOF
 su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 
-HDXCONF="\
+export HDXCONF="\
 # HDX API keys
 ckanext.knowledgehub.hdx.api_key = <HDX_API_KEY>
 ckanext.knowledgehub.hdx.site = test
