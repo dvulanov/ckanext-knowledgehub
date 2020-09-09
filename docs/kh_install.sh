@@ -304,8 +304,8 @@ mv /etc/httpd/conf.d/welcome.conf /etc/httpd/conf.d/welcome.conf_backup
 echo "Config httpd"
 echo "
 <VirtualHost 127.0.0.1:8080>
-    ServerName knowledgehub.prodtest.unhcr.org
-    ServerAlias www.knowledgehub.prodtest.unhcr.org
+    ServerName knowledgehub.unhcr.org
+    ServerAlias www.knowledgehub.unhcr.org
     WSGIScriptAlias / /etc/ckan/default/apache.wsgi
     # Pass authorization info on (needed for rest api).
     WSGIPassAuthorization On
@@ -331,7 +331,7 @@ echo "
       Require all granted
     </Directory>
 </VirtualHost>
-" > /etc/httpd/conf.d/knowledgehub.prodtest.unhcr.org.conf
+" > /etc/httpd/conf.d/knowledgehub.unhcr.org.conf
 
 
 firewall-cmd --permanent --add-service=http
