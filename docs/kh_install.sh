@@ -202,7 +202,8 @@ su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 
 pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-oauth2.git@kh_stable#egg=ckanext-oauth2"
-echo "
+
+AUTHCONF="\
 # OAuth2 settings
 ckan.oauth2.register_url = https://YOUR_OAUTH_SERVICE/users/sign_up
 ckan.oauth2.reset_url = https://YOUR_OAUTH_SERVICE/users/password/new
@@ -218,7 +219,9 @@ ckan.oauth2.profile_api_user_field = username
 ckan.oauth2.profile_api_fullname_field = full_name
 ckan.oauth2.profile_api_mail_field = email
 ckan.oauth2.authorization_header = Authorization
-" >> /etc/ckan/default/production.ini
+"
+mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
+awk -v patch="$AUTHCONF" '/## Logging configuration/ {print patch; print; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
 
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk '/ckan.plugins = / {print "ckan.plugins = recline_view validation stats datarequests oauth2"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
