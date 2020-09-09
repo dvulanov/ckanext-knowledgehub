@@ -264,14 +264,18 @@ EOF
 #####
 su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
-echo "
+
+HDXCONF="\
 # HDX API keys
 ckanext.knowledgehub.hdx.api_key = <HDX_API_KEY>
 ckanext.knowledgehub.hdx.site = test
 ckanext.knowledgehub.hdx.owner_org = <HDX_OWNER_ORG_ID>
 ckanext.knowledgehub.hdx.dataset_source = knowledgehub
 ckanext.knowledgehub.hdx.maintainer = <HDX_USER_NAME>
-" >> /etc/ckan/default/production.ini
+"
+mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
+awk -v patch="$HDXCONF" '/## Logging configuration/ {print patch; print; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
+
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk '/ckan.plugins = / {print "ckan.plugins = envvars recline_view validation knowledgehub stats datastore datapusher datarequests oauth2"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
