@@ -222,9 +222,6 @@ curl http://localhost:8800
 su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 
-mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
-awk '/ckan.plugins = / {print "ckan.plugins = recline_view validation stats datastore datapusher datarequests oauth2"; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
-
 cd /usr/lib/ckan/default/src/ckan
 # Add the user
 paster --plugin=ckan user add ckan_admin email=ckan_admin@knowledgehb.org -c /etc/ckan/default/production.ini
