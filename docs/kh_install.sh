@@ -224,7 +224,7 @@ awk -v patch="$AUTHCONF" '/## Logging configuration/ {print patch; print; next}1
 chown ckan:ckan /etc/ckan/default/production.ini
 chown ckan:ckan /etc/ckan/default/production.ini.bak
 
-"
+###
 su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 
