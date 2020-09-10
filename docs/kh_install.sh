@@ -164,6 +164,9 @@ Part 2: Validation Extention
 "
 su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
+# this extension installs goodtables, which installs pyrsistent>=0.14.0 (from jsonschema>=2.5->tableschema<2.0,>=1.0.3->goodtables==1.5.1)
+# however pyrsisten > 0.16.0 breaks with python 2, so we need to install 0.16.0 manually to not grab the latest
+pip install pyrsistent==0.16.0
 pip install --no-cache-dir -e "git+https://github.com/frictionlessdata/ckanext-validation.git#egg=ckanext-validation"
 cd /usr/lib/ckan/default/
 pip install -r src/ckanext-validation/requirements.txt
