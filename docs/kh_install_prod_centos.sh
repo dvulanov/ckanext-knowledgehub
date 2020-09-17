@@ -14,17 +14,10 @@ Part 1: Base Install
 "
 yum -y update
 yum install -y epel-release
-yum install -y python-devel postgresql-server postgresql-contrib python-pip python-virtualenv postgresql-devel git redis postgis wget lsof policycoreutils-python java-1.8.0-openjdk
-yum install -y nginx httpd mod_wsgi firewalld
+yum install -y python-devel python-pip python-virtualenv git redis wget lsof policycoreutils-python java-1.8.0-openjdk
+yum install -y nginx httpd mod_wsgi
 yum groupinstall -y 'Development Tools'
 
-echo "Init postgresql"
-postgresql-setup initdb
-systemctl enable postgresql
-systemctl start postgresql
-
-systemctl enable firewalld
-systemctl start firewalld
 systemctl enable redis
 systemctl start redis
 
@@ -54,32 +47,6 @@ pip install setuptools==36.1
 pip install -e 'git+https://github.com/ckan/ckan.git@ckan-2.8.2#egg=ckan'
 pip install -r /usr/lib/ckan/default/src/ckan/requirements.txt
 deactivate
-EOF
-
-echo "fix postgres config"
-mv /var/lib/pgsql/data/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf.bak
-sed -e 's/ ident/ md5/' \
-    -e 's/#local/local/' \
-    -e 's/#host/host/'  /var/lib/pgsql/data/pg_hba.conf.bak > /var/lib/pgsql/data/pg_hba.conf
-
-chmod 600 /var/lib/pgsql/data/pg_hba.conf
-chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf
-
-systemctl restart postgresql
-
-#####
-sudo -i -u postgres psql -c "CREATE USER ckan_default WITH NOSUPERUSER NOCREATEDB NOCREATEROLE PASSWORD 'password';"
-sudo -i -u postgres psql -c "CREATE USER datastore_default WITH NOSUPERUSER NOCREATEDB NOCREATEROLE PASSWORD 'password';"
-
-su -s /bin/bash - postgres << EOF
-echo "This is for ckan_default"
-#createuser -S -D -R -P ckan_default
-createdb -O ckan_default ckan_default -E utf-8
-psql -d ckan_default -c "create extension postgis;"
-psql -d ckan_default -c "select PostGIS_version();"
-echo "This is for datastore_default"
-#createuser -S -D -R -P -l datastore_default
-createdb -O ckan_default datastore_default -E utf-8
 EOF
 
 echo "Solr"
@@ -332,8 +299,6 @@ echo "
 </VirtualHost>
 " > /etc/httpd/conf.d/knowledgehub.unhcr.org.conf
 
-
-firewall-cmd --permanent --add-service=http
 
 mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.orig
 sed -e 's/Listen 80/Listen 8080/' /etc/httpd/conf/httpd.conf.orig > /etc/httpd/conf/httpd.conf
