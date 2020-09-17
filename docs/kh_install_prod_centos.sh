@@ -105,8 +105,8 @@ mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.orig
 sed -e 's/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_default/sqlalchemy.url = postgresql:\/\/ckan_default:password@localhost/' \
     -e 's/ckan.site_url =/ckan.site_url = http:\/\/knowledgehub.unhcr.org/' \
     -e 's/ckan.site_id = default/ckan.site_id = unhcr_knowledgehub/' \
-    -e 's/#ckan.datastore.write_url/ckan.datastore.write_url/' \
-    -e 's/#ckan.datastore.read_url/ckan.datastore.read_url/' \
+    -e 's/#ckan.datastore.write_url = postgresql:\/\/ckan_default:pass@localhost\/datastore_default/ckan.datastore.write_url = postgresql:\/\/ckan_default:pass@localhost\/datastore_default/' \
+    -e 's/#ckan.datastore.read_url = postgresql:\/\/datastore_default:pass@localhost\/datastore_default/ckan.datastore.read_url = postgresql:\/\/datastore_default:pass@localhost\/datastore_default/' \
     -e 's/#ckan.storage_path/ckan.storage_path/' \
     -e 's/#solr_url = http:\/\/127.0.0.1:8983\/solr/solr_url = http:\/\/127.0.0.1:8983\/solr\/ckan/' /etc/ckan/default/production.ini.orig > /etc/ckan/default/production.ini 
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
