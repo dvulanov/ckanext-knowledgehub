@@ -102,7 +102,7 @@ su -s /bin/bash - ckan << EOF
 . /usr/lib/ckan/default/bin/activate
 paster make-config ckan /etc/ckan/default/production.ini
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.orig
-sed -e 's/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_default/sqlalchemy.url = postgresql:\/\/ckan_default:password@localhost\/ckan_default?sslmode=disable/' \
+sed -e 's/sqlalchemy.url = postgresql:\/\/ckan_default:pass@localhost\/ckan_default/sqlalchemy.url = postgresql:\/\/ckan_default:password@localhost/' \
     -e 's/ckan.site_url =/ckan.site_url = http:\/\/knowledgehub.unhcr.org/' \
     -e 's/ckan.site_id = default/ckan.site_id = unhcr_knowledgehub/' \
     -e 's/#ckan.datastore.write_url/ckan.datastore.write_url/' \
