@@ -14,7 +14,7 @@ Part 1: Base Install
 "
 yum -y update
 yum install -y epel-release
-yum install -y python-devel python-pip python-virtualenv git redis wget lsof policycoreutils-python java-1.8.0-openjdk
+yum install -y python-devel postgresql-server python-pip python-virtualenv git redis wget lsof policycoreutils-python java-1.8.0-openjdk
 yum install -y nginx httpd mod_wsgi
 yum groupinstall -y 'Development Tools'
 
