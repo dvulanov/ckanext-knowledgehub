@@ -198,20 +198,17 @@ Part 4: OAuth2 Extention
 "
 AUTHCONF="\
 # OAuth2 settings
-ckan.oauth2.register_url = https://YOUR_OAUTH_SERVICE/users/sign_up
-ckan.oauth2.reset_url = https://YOUR_OAUTH_SERVICE/users/password/new
-ckan.oauth2.edit_url = https://YOUR_OAUTH_SERVICE/settings
 ckan.oauth2.authorization_endpoint = https://YOUR_OAUTH_SERVICE/authorize
 ckan.oauth2.token_endpoint = https://YOUR_OAUTH_SERVICE/token
-ckan.oauth2.profile_api_url = https://YOUR_OAUTH_SERVICE/user
+ckan.oauth2.profile_api_url = https://graph.microsoft.com/v1.0/me
 ckan.oauth2.client_id = YOUR_CLIENT_ID
 ckan.oauth2.client_secret = YOUR_CLIENT_SECRET
-ckan.oauth2.scope = profile other.scope
-ckan.oauth2.rememberer_name = auth_tkt
-ckan.oauth2.profile_api_user_field = username
-ckan.oauth2.profile_api_fullname_field = full_name
-ckan.oauth2.profile_api_mail_field = email
+ckan.oauth2.scope = profile openid email
+ckan.oauth2.profile_api_user_field = unique_name
+ckan.oauth2.profile_api_fullname_field = name
+ckan.oauth2.profile_api_mail_field = unique_name
 ckan.oauth2.authorization_header = Authorization
+ckan.oauth2.jwt.enable = true
 "
 mv /etc/ckan/default/production.ini /etc/ckan/default/production.ini.bak
 awk -v patch="$AUTHCONF" '/## Logging configuration/ {print patch; print; next}1' /etc/ckan/default/production.ini.bak > /etc/ckan/default/production.ini
