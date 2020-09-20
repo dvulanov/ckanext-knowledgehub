@@ -422,17 +422,6 @@ EOF
 systemctl restart httpd
 curl http://localhost:8800
 
-#####
-su -s /bin/bash - ckan << EOF
-. /usr/lib/ckan/default/bin/activate
-cd /usr/lib/ckan/default/src/ckan
-# Add the user
-paster --plugin=ckan user add ckan_admin email=ckan_admin@knowledgehub.unhcr.org -c /etc/ckan/default/production.ini
-# Set the user `ckan_admin` as sysadmin
-paster --plugin=ckan sysadmin add ckan_admin -c /etc/ckan/default/production.ini
-deactivate
-EOF
-
 echo "
 ############################################
 Part 7: Workers Config
@@ -510,3 +499,14 @@ chmod 664 /etc/systemd/system/ckan-worker.bulk.service
 systemctl enable ckan-worker.bulk
 systemctl start ckan-worker.bulk
 systemctl status ckan-worker.bulk
+
+
+#############################################
+echo "
+As ckan user, run these commands and create ckan_admin
+. /usr/lib/ckan/default/bin/activate
+cd /usr/lib/ckan/default/src/ckan
+paster --plugin=ckan user add ckan_admin email=ckan_admin@knowledgehub.unhcr.org -c /etc/ckan/default/production.ini
+paster --plugin=ckan sysadmin add ckan_admin -c /etc/ckan/default/production.ini
+"
+#############################################
