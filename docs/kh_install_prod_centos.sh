@@ -128,7 +128,6 @@ EOF
 # for some reason this was not created
 su -s /bin/bash - ckan << EOF
 mkdir -p /var/lib/ckan/storage/uploads
-deactivate
 EOF
 
 echo "
