@@ -30,12 +30,12 @@ chmod 755 /usr/lib/ckan
 mkdir -p /etc/ckan/default
 chown -R ckan /etc/ckan
 
-mkdir /usr/lib/ckan/data
-chown apache:apache /usr/lib/ckan/data
-chmod 755 /usr/lib/ckan/data
+mkdir /var/lib/ckan/data
+chown apache:apache /var/lib/ckan/data
+chmod 755 /var/lib/ckan/data
 
-semanage fcontext -a -t httpd_sys_rw_content_t "/usr/lib/ckan/data(/.*)?"
-restorecon -R /usr/lib/ckan/data
+semanage fcontext -a -t httpd_sys_rw_content_t "/var/lib/ckan/data(/.*)?"
+restorecon -R /var/lib/ckan/data
 
 #####
 su -s /bin/bash - ckan << EOF
