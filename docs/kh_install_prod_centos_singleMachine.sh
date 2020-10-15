@@ -478,7 +478,7 @@ su -s /bin/bash - ckan << EOF
 echo "0 0 * * * /usr/lib/ckan/default/bin/knowledgehub -c /etc/ckan/default/production.ini predictive_search train >/var/log/ckan/cronjob_predictive_search.log 2>&1" | crontab -
 crontab -l > mytempcron
 #echo new cron into cron file
-echo "0 0 * * * /usr/lib/ckan/default/bin/knowledgehub -c /etc/ckan/default/production.ini intents update >/var/log/ckan/cronjob_intents_update.log 2>&1" >> mycron
+echo "0 0 * * * /usr/lib/ckan/default/bin/knowledgehub -c /etc/ckan/default/production.ini intents update >/var/log/ckan/cronjob_intents_update.log 2>&1" >> mytempcron
 #install new cron file
 crontab mytempcron
 rm mytempcron
