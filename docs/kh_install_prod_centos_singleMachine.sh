@@ -291,6 +291,7 @@ EOF
 echo "Config wsgi"
 echo "
 import os
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 activate_this = os.path.join('/usr/lib/ckan/default/bin/activate_this.py')
 execfile(activate_this, dict(__file__=activate_this))
 from paste.deploy import loadapp
