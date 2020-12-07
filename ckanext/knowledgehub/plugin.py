@@ -101,17 +101,17 @@ class KnowledgehubPlugin(plugins.SingletonPlugin, DefaultDatasetForm,
         toolkit.add_resource('fanstatic', 'knowledgehub')
 
         # Eliminates the need to re-initialize the database when model changes.
-        _init_knowledgehub_database()
+#        _init_knowledgehub_database()
         _patch_ckan_base_controller()
 
         # patch the CKAN core functionality
         patch_ckan_core_search()
         # Extend CKAN Tag table
-        extend_tag_table()
+        # extend_tag_table()
         # Extend CKAN ResourceView table
-        extend_resource_view_table()
+        # extend_resource_view_table()
         # Upgrade the dashboard table.
-        dashboard_table_upgrade()
+        #dashboard_table_upgrade()
 
         DatastoreBackend.register_backends()
         # DatastoreBackend.set_active_backend(config)
