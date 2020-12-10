@@ -26,7 +26,9 @@ RUN apt-get update && apt-get install -y \
     unixodbc-dev \
     freetds-dev \
     sudo \
-    tzdata
+    tzdata \
+    vim \
+    bash-completion
 
 RUN dpkg-reconfigure -f noninteractive tzdata
 

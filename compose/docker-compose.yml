@@ -4,6 +4,30 @@ volumes:
   ckan_data:
   pg_data:
   solr_data:
+  ckanext_kh:
+    driver: local
+    driver_opts: 
+      type: nfs
+      o: addr=host.docker.internal,rw,nolock,hard,nointr,nfsvers=3
+      device: ":/System/Volumes/Data/Users/UNHCR/DIMA/KnowledgeHub/ckanext-knowledgehub/ckanext/knowledgehub"
+  ckanext_oauth2:
+    driver: local
+    driver_opts: 
+      type: nfs
+      o: addr=host.docker.internal,rw,nolock,hard,nointr,nfsvers=3
+      device: ":/System/Volumes/Data/Users/UNHCR/DIMA/KnowledgeHub/ckanext-oauth2/ckanext/oauth2"
+  ckanext_validation:
+    driver: local
+    driver_opts: 
+      type: nfs
+      o: addr=host.docker.internal,rw,nolock,hard,nointr,nfsvers=3
+      device: ":/System/Volumes/Data/Users/UNHCR/DIMA/KnowledgeHub/ckanext-validation/ckanext/validation"
+  ckanext_dr:
+    driver: local
+    driver_opts: 
+      type: nfs
+      o: addr=host.docker.internal,rw,nolock,hard,nointr,nfsvers=3
+      device: ":/System/Volumes/Data/Users/UNHCR/DIMA/KnowledgeHub/ckanext-datarequests/ckanext/datarequests"
 
 
 services:
@@ -33,6 +57,10 @@ services:
       - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
     volumes:
       - ckan_data:/srv/app/data
+      - ckanext_kh:/srv/app/src/ckanext-knowledgehub/ckanext/knowledgehub
+      - ckanext_oauth2:/srv/app/src/ckanext-knowledgehub/ckanext/oauth2
+      - ckanext_validation:/srv/app/src/ckanext-knowledgehub/ckanext/validation
+      - ckanext_dr:/srv/app/src/ckanext-knowledgehub/ckanext/datarequests
 
   db:
     container_name: db
