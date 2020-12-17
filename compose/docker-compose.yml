@@ -4,6 +4,12 @@ volumes:
   ckan_data:
   pg_data:
   solr_data:
+  ckan_ckan:
+    driver: local
+    driver_opts: 
+      type: nfs
+      o: addr=host.docker.internal,rw,nolock,hard,nointr,nfsvers=3
+      device: ":/System/Volumes/Data/Users/UNHCR/DIMA/KnowledgeHub/ckan/ckan"
   ckanext_kh:
     driver: local
     driver_opts: 
@@ -57,6 +63,7 @@ services:
       - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
     volumes:
       - ckan_data:/srv/app/data
+      - ckan_ckan:/srv/app/src/ckan/ckan
       - ckanext_kh:/srv/app/src/ckanext-knowledgehub/ckanext/knowledgehub
       - ckanext_oauth2:/srv/app/src/ckanext-knowledgehub/ckanext/oauth2
       - ckanext_validation:/srv/app/src/ckanext-knowledgehub/ckanext/validation
@@ -79,6 +86,8 @@ services:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "ckan"]
+    ports:
+      - "5432:5432"
 
   solr:
     container_name: solr

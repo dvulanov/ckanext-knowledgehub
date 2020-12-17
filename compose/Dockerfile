@@ -3,11 +3,9 @@
 ###################
 FROM keitaro/ckan:2.8.6-focal as extbuild
 
-MAINTAINER Keitaro <info@keitaro.com>
-
 USER root
 
-ENV TZ=Europe/Skopje
+ENV TZ=UTC
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update && apt-get install -y \
@@ -36,20 +34,19 @@ RUN dpkg-reconfigure -f noninteractive tzdata
 RUN pip install cython && \
     # Install extensions
     # knowledgehub
-    pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-knowledgehub.git#egg=ckanext-knowledgehub" && \
+    pip install --no-cache-dir -e "git+https://github.com/dvulanov/ckanext-knowledgehub.git#egg=ckanext-knowledgehub" && \
     pip install --no-cache-dir -r "${APP_DIR}/src/ckanext-knowledgehub/requirements.txt" && \
     # validation
     pip install --no-cache-dir -e "git+https://github.com/frictionlessdata/ckanext-validation.git#egg=ckanext-validation" && \
     pip install --no-cache-dir -r "${APP_DIR}/src/ckanext-validation/requirements.txt" && \
     # datarequests
-    pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-datarequests.git@kh_stable#egg=ckanext-datarequests" && \
+    pip install --no-cache-dir -e "git+https://github.com/dvulanov/ckanext-datarequests.git@kh_stable#egg=ckanext-datarequests" && \
     # hdx 
     pip uninstall psycopg2-binary -y && \
     pip uninstall psycopg2 -y && \
     pip install --no-cache-dir psycopg2==2.7.3.2 && \
-
     # oauth2
-    pip install --no-cache-dir -e "git+https://github.com/keitaroinc/ckanext-oauth2.git@kh_stable#egg=ckanext-oauth2"
+    pip install --no-cache-dir -e "git+https://github.com/dvulanov/ckanext-oauth2.git@kh_stable#egg=ckanext-oauth2"
 
 # Download spaCy language model for english language
 RUN python -m spacy download en_core_web_sm
